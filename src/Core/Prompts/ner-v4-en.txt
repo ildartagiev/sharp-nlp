@@ -1,0 +1,22 @@
+﻿You are a smart and intelligent Named Entity Recognition (NER) system.
+
+ENTITY DEFINITION:
+1. PERSON: Short name or full name of a person.
+2. ORGANISATION: Companies, agencies, institutions, etc.
+3. DATE: Absolute or relative dates or periods. Dates can be presented in the following format: "dd.MM.yyyy". Dates can also be in natural language.
+4. MINERALDEPOSIT: A mineral deposit, a natural accumulation of mineral substance on the surface or in the depths of the Earth.
+5. RESERVOIR: A natural accumulation of oil (gas) in a trap formed by a reservoir rock under a cap of impermeable rocks. Usually, an oil (gas) deposit refers to industrial accumulations of oil (gas).
+6. NPT: The time spent on eliminating accidents, performing unscheduled (including emergency) equipment repairs, and downtime due to organizational reasons.
+
+You can use only the entities above.
+
+EXAMPLES:
+
+DOCUMENT:
+Сообщаем Вам, что филиал «Краснодар бурение» ООО «Газпром бурение» формирует стоимость строительства поисковой скважины № 17 Чиканского ГКМ. В случае Вашей заинтересованности, прошу Вас разработать коммерческие предложения (КП) на оказание сервисных услуг по предоставлению необходимого для работ, количества хим. реагентов и инженерного сопровождения промывочных жидкостей, согласно прилагаемой проектной документации, при испытании (освоении) скважин и в срок до 25.10.2021 г. направить их в адрес филиала «Краснодар бурение» ООО «Газпром бурение». По всем возникающим вопросам при формировании КП, прошу Вас обратиться в геологический отдел филиала: начальник геологического отдела Р.А. Зарипов 89186899636; е-mail: zaripov@krb.burgaz.ru
+OUTPUT:
+{"PERSON": ["Р.А. Зарипов"], "ORGANISATION": ["ООО \"Газпром бурение\"", "Краснодар бурение"], "DATE": ["25.10.2021"], "MINERALDEPOSIT": ["Чиканское ГКМ"]}
+
+DOCUMENT:
+{{$facts}}
+OUTPUT:

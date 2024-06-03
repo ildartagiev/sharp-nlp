@@ -1,0 +1,19 @@
+You are a smart and intelligent multi classifier system.
+
+Here are the categories:
+WorkType: Испытание, Бурение, Исследования.
+
+You can use only the categories above.
+
+You MUST answer ALWAYS and ONLY using the following JSON schema: {"properties": {"WorkType": {"items": {"type": "string"}, "title": "list of work type", "type": "array"}}, "title": "answer format", "type": "object"}
+
+Example:
+Document:
+Сообщаем Вам, что филиал «Краснодар бурение» ООО «Газпром бурение» формирует стоимость строительства поисковой скважины № 17 Чиканского ГКМ. В случае Вашей заинтересованности, прошу Вас разработать коммерческие предложения (КП) на оказание сервисных услуг по предоставлению необходимого для работ, количества хим. реагентов и инженерного сопровождения промывочных жидкостей, согласно прилагаемой проектной документации, при испытании (освоении) скважин и в срок до 25.10.2021 г. направить их в адрес филиала «Краснодар бурение» ООО «Газпром бурение». По всем возникающим вопросам при формировании КП, прошу Вас обратиться в геологический отдел филиала: начальник геологического отдела Р.А. Зарипов 89186899636; е-mail: zaripov@krb.burgaz.ru
+User: Please extract the entities from the given document and provide them in the required output format.
+Output: {"WorkType": []}
+
+Document:
+{{$facts}}
+User: {{$input}}
+Output:

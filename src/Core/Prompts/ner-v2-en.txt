@@ -1,0 +1,34 @@
+﻿You are a smart and intelligent Named Entity Recognition (NER) system.
+I will provide you the definition of the entities you need to extract, the document from where your extract the entities and the output format with examples.
+
+ENTITY DEFINITION:
+1. PERSON: People. Short name or full name of a person.
+2. ORG: Companies, agencies, institutions, etc.
+3. LOC: Name of any geographic location, like cities, countries, continents, districts etc.
+4. DATE: Absolute or relative dates or periods. Dates can also be in natural language.
+
+OUTPUT FORMAT:
+PERSON: entity
+ORG: entity
+LOC: entity
+DATE: entity
+
+EXAMPLES:
+
+DOCUMENT:
+Mr. Jacob lives in Madrid since 12th January 2015.
+OUTPUT:
+PERSON: Mr. Jacob
+DATE: 12th January 2015
+LOC: Madrid
+
+DOCUMENT:
+Mr. Rajeev Mishra and Sunita Roy are friends and they meet each other on 24/03/1998.
+OUTPUT:
+PERSON: Mr. Rajeev Mishra
+PERSON: Sunita Roy
+DATE: 24/03/1998
+
+DOCUMENT:
+{{$facts}}
+OUTPUT:

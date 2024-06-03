@@ -1,0 +1,99 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SharpNlp.Core</RootNamespace>
+    <AssemblyName>SharpNlp.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\json.gbnf" />
+    <None Remove="Prompts\answer-with-facts.txt" />
+    <None Remove="Prompts\classifier-v1-en.txt" />
+    <None Remove="Prompts\classifier-v1-ru.txt" />
+    <None Remove="Prompts\ner-docsgpt.txt" />
+    <None Remove="Prompts\ner-v2-en.txt" />
+    <None Remove="Prompts\ner-v3-en.txt" />
+    <None Remove="Prompts\ner-v3-ru.txt" />
+    <None Remove="Prompts\ner-v4-en.txt" />
+    <None Remove="Prompts\ner-v4-ru.txt" />
+    <None Remove="Prompts\ner-v5-en.txt" />
+    <None Remove="Prompts\ner-v5-ru.txt" />
+    <None Remove="Prompts\ner-v6-ru.txt" />
+    <None Remove="Prompts\ner-v7-ru.txt" />
+    <None Remove="Prompts\nlp_doc_zero-shot_en_v2.txt" />
+    <None Remove="Prompts\nlp_doc_zero-shot_ru_v1.txt" />
+    <None Remove="Prompts\nlp_doc_zero-shot_ru_v2.txt" />
+    <None Remove="Prompts\summarize.txt" />
+    <None Remove="Prompts\translate.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\json.gbnf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\answer-with-facts.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\classifier-v1-en.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\classifier-v1-ru.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-docsgpt.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v2-en.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v3-en.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v3-ru.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v4-en.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v4-ru.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v5-en.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v5-ru.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v6-ru.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\ner-v7-ru.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\nlp_doc_zero-shot_en_v2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\nlp_doc_zero-shot_ru_v1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\nlp_doc_zero-shot_ru_v2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\summarize.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Prompts\translate.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LLamaSharp" />
+    <PackageReference Include="LLamaSharp.Backend.OpenCL" />
+    <PackageReference Include="LLamaSharp.kernel-memory" />
+    <PackageReference Include="LLamaSharp.semantic-kernel" />
+    <PackageReference Include="Microsoft.KernelMemory.Core" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+</Project>

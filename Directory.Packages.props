@@ -1,0 +1,22 @@
+<!-- For more info on central package management go to https://devblogs.microsoft.com/nuget/introducing-central-package-management/ -->
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="DotNetEnv" Version="3.0.0" />
+    <PackageVersion Include="LLamaSharp" Version="0.12.0" />
+    <PackageVersion Include="LLamaSharp.Backend.OpenCL" Version="0.12.0" />
+    <PackageVersion Include="LLamaSharp.kernel-memory" Version="0.12.0" />
+    <PackageVersion Include="LLamaSharp.semantic-kernel" Version="0.12.0" />
+    <PackageVersion Include="Microsoft.KernelMemory.Core" Version="0.61.240524.1" />
+    <PackageVersion Include="Microsoft.KernelMemory.Service.AspNetCore" Version="0.61.240524.1" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+    <PackageVersion Include="Serilog.Enrichers.Process" Version="2.0.2" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+    <PackageVersion Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+</Project>

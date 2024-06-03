@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E2DA20AA-28D1-455C-BF50-C49A8F831633}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{242FAC11-822E-468D-811A-3A6DFB3F9E96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{4A2CC241-94B4-4FEC-A836-F477828AA8CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{78687E4B-E426-4FA1-83F6-770C5EC7821D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A2CC241-94B4-4FEC-A836-F477828AA8CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A2CC241-94B4-4FEC-A836-F477828AA8CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A2CC241-94B4-4FEC-A836-F477828AA8CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A2CC241-94B4-4FEC-A836-F477828AA8CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78687E4B-E426-4FA1-83F6-770C5EC7821D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78687E4B-E426-4FA1-83F6-770C5EC7821D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78687E4B-E426-4FA1-83F6-770C5EC7821D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78687E4B-E426-4FA1-83F6-770C5EC7821D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4A2CC241-94B4-4FEC-A836-F477828AA8CA} = {242FAC11-822E-468D-811A-3A6DFB3F9E96}
+		{78687E4B-E426-4FA1-83F6-770C5EC7821D} = {242FAC11-822E-468D-811A-3A6DFB3F9E96}
+	EndGlobalSection
+EndGlobal

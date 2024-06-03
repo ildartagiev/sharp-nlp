@@ -1,0 +1,35 @@
+﻿@Web_HostAddress = http://localhost:5022
+
+POST {{Web_HostAddress}}/api/kernelmemory/upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="DocumentId"
+
+doc003
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="File"; filename="о запросе КП химия + промывочные жидкости 17 Чиканского ГКМ.docx"
+Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+< C:\Users\samwi\Documents\projects\разбор_документов\документы\о запросе КП химия + промывочные жидкости 17 Чиканского ГКМ.docx
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+GET {{Web_HostAddress}}/api/kernelmemory/upload-status?index=string&documentId=string
+
+###
+
+DELETE {{Web_HostAddress}}/api/kernelmemory/documents?index=string&documentId=string
+
+###
+
+GET {{Web_HostAddress}}/api/kernelmemory/ask
+
+###
+
+GET {{Web_HostAddress}}/api/kernelmemory/nlp?question=&index=&documentId=doc003
+
+###
+
+GET http://localhost:5022/api/KernelMemory/upload-status?Index=default&DocumentId=doc003
