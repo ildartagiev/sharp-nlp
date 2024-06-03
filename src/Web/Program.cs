@@ -41,12 +41,11 @@ switch (builder.Configuration.GetValue<string>("LLM"))
 }
 
 var kernelMemory = kmBuilder
-    .UseRabbitMQ(builder.Configuration)
     .UseCustomTextPartitioningOptions(builder.Configuration)
     .WithCustomPromptProvider<PromptProvider>()
     .UseCustomSearchClient<SearchClient>(builder.Configuration)
     .UseSimpleStorage(builder.Configuration)
-    .Build<MemoryService>();
+    .Build();
 
 builder.Services.AddSingleton<IKernelMemory>(kernelMemory);
 

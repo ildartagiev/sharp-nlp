@@ -6,7 +6,10 @@
   <ItemGroup>
     <PackageVersion Include="DotNetEnv" Version="3.0.0" />
     <PackageVersion Include="LLamaSharp" Version="0.12.0" />
+    <PackageVersion Include="LLamaSharp.Backend.Cpu" Version="0.12.0" />
     <PackageVersion Include="LLamaSharp.Backend.OpenCL" Version="0.12.0" />
+    <PackageVersion Include="LLamaSharp.Backend.Cuda11" Version="0.12.0" />
+    <PackageVersion Include="LLamaSharp.Backend.Cuda12" Version="0.12.0" />
     <PackageVersion Include="LLamaSharp.kernel-memory" Version="0.12.0" />
     <PackageVersion Include="LLamaSharp.semantic-kernel" Version="0.12.0" />
     <PackageVersion Include="Microsoft.KernelMemory.Core" Version="0.61.240524.1" />
