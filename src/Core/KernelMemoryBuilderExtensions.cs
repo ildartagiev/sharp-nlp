@@ -1,6 +1,7 @@
 ﻿using LLama;
 using LLama.Common;
 using LLama.Grammars;
+using LLama.Native;
 using LLamaSharp.KernelMemory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.KernelMemory;
@@ -8,12 +9,53 @@ using Microsoft.KernelMemory.Configuration;
 using Microsoft.KernelMemory.DocumentStorage.DevTools;
 using Microsoft.KernelMemory.FileSystem.DevTools;
 using Microsoft.KernelMemory.MemoryStorage.DevTools;
-using Microsoft.KernelMemory.Search;
 
 namespace SharpNlp.Core;
 
 public static class KernelMemoryBuilderExtensions
 {
+    //private static readonly SafeLLamaGrammarHandle s_Grammar = Grammar.Parse(Utils.ReadResourceAsText("json.gbnf", "Assets").Trim(), "root").CreateInstance();
+
+    private static readonly IReadOnlyList<string> s_AntiPrompts = ["Document:", "DOCUMENT:", "Output:", "OUTPUT:", "User:", "USER:", "\n\n"];
+
+    private static readonly InferenceParams s_InferenceParams = new()
+    {
+        AntiPrompts = s_AntiPrompts,
+        Temperature = 0.0f
+    };
+
+    private static LLamaSharpConfig CreateLLamaSharpConfig(string modelPath, InferenceParams? inferenceParams = null)
+    {
+        return new(modelPath)
+        {
+            ContextSize = 8192,
+            GpuLayerCount = 5,
+            MainGpu = 0,
+            Seed = 1337,
+            SplitMode = LLama.Native.GPUSplitMode.None,
+            DefaultInferenceParams = inferenceParams
+        };
+    }
+
+    private static ModelParams CreateModelParams(string modelPath, bool embedding)
+    {
+        return new(modelPath)
+        {
+            Embeddings = embedding,
+            ContextSize = 8192,
+            GpuLayerCount = 5,
+            MainGpu = 0,
+            Seed = 1337,
+            SplitMode = LLama.Native.GPUSplitMode.None
+        };
+    }
+
+    /// <summary>
+    /// Использовать брокер сообщений
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
     public static IKernelMemoryBuilder UseRabbitMQ(this IKernelMemoryBuilder builder, IConfiguration config)
     {
         var rabbitMqConfig = new RabbitMqConfig();
@@ -23,7 +65,7 @@ public static class KernelMemoryBuilderExtensions
     }
 
     /// <summary>
-    /// Добавить хранилище на диске.
+    /// Использовать хранилище на локальном диске.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
@@ -53,7 +95,7 @@ public static class KernelMemoryBuilderExtensions
     }
 
     /// <summary>
-    /// Добавить хранилище в qdrant (см. README, appsettings.json).
+    /// Использовать хранилище в виде PostgreSQL (см. README, appsettings.json).
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
@@ -67,7 +109,7 @@ public static class KernelMemoryBuilderExtensions
     }
 
     /// <summary>
-    /// Добавить хранилище в виде Qdrant (см. README, appsettings.json).
+    /// Использовать хранилище в виде Qdrant (см. README, appsettings.json).
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
@@ -96,24 +138,21 @@ public static class KernelMemoryBuilderExtensions
 
 
     /// <summary>
-    /// Добавить кастомный ISearchClient с конфигурацией приложения.
+    /// Использовать кастомный ISearchClient с конфигурацией приложения.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IKernelMemoryBuilder UseCustomSearchClient<T>(this IKernelMemoryBuilder builder, IConfiguration config)
-        where T : class, ISearchClient
+    public static IKernelMemoryBuilder UseSearchClientConfig(this IKernelMemoryBuilder builder, IConfiguration config)
     {
         var searchClientConfig = new SearchClientConfig();
         config.BindSection("KernelMemory:NERSearchClient", searchClientConfig);
 
-        return builder
-            .WithSearchClientConfig(searchClientConfig)
-            .WithCustomSearchClient<T>();
+        return builder.WithSearchClientConfig(searchClientConfig);
     }
 
     /// <summary>
-    /// Использовать LLM от OpenAI.
+    /// Использовать Open AI для эмбеддинга и генерации текста.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
@@ -132,7 +171,7 @@ public static class KernelMemoryBuilderExtensions
     }
 
     /// <summary>
-    /// Использовать embedders-ы от OpenAI.
+    /// Использовать Open AI для эмбеддинга.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
@@ -143,6 +182,20 @@ public static class KernelMemoryBuilderExtensions
         config.BindSection("KernelMemory:Services:OpenAI:TextEmbeddingGeneration", openAIEmbeddingConfig);
 
         return builder.WithOpenAITextEmbeddingGeneration(openAIEmbeddingConfig);
+    }
+
+    /// <summary>
+    /// Использовать Open AI для генерации текста.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IKernelMemoryBuilder UseOpenAITextGeneration(this IKernelMemoryBuilder builder, IConfiguration config)
+    {
+        var openAIConfig = new OpenAIConfig();
+        config.BindSection("KernelMemory:Services:OpenAI:TextGeneration", openAIConfig);
+
+        return builder.WithOpenAITextGeneration(openAIConfig);
     }
 
     /// <summary>
@@ -160,17 +213,20 @@ public static class KernelMemoryBuilderExtensions
     }
 
     /// <summary>
-    /// Использовать локальную LLM для генерации текста.
+    /// Использовать локальную LLM для генерации эмбеддингов.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IKernelMemoryBuilder UseLlamaTextGeneration(this IKernelMemoryBuilder builder, IConfiguration config)
+    public static IKernelMemoryBuilder UseLLamaSharpTextEmbeddingGeneration(this IKernelMemoryBuilder builder, IConfiguration config)
     {
-        var llamaSharpConfig = new LlamaSharpConfig();
-        config.BindSection("KernelMemory:Services:KMLlamaSharp:TextGeneration", llamaSharpConfig);
+        ModelParams modelParams = CreateModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration:ModelPath")!, true);
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration", modelParams);
 
-        return builder.WithLlamaTextGeneration(llamaSharpConfig);
+        var weights = LLamaWeights.LoadFromFile(modelParams);
+        LLamaEmbedder embedder = new LLamaEmbedder(weights, modelParams);
+
+        return builder.WithLLamaSharpTextEmbeddingGeneration(new LLamaSharpTextEmbeddingGenerator(embedder));
     }
 
     /// <summary>
@@ -179,19 +235,12 @@ public static class KernelMemoryBuilderExtensions
     /// <param name="builder"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IKernelMemoryBuilder UseLLamaSharpTextEmbeddingGeneration(this IKernelMemoryBuilder builder, IConfiguration config)
+    public static IKernelMemoryBuilder UseLLamaSharpTextEmbeddingGenerationAsConfig(this IKernelMemoryBuilder builder, IConfiguration config)
     {
-        ModelParams @params = new ModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration:ModelPath")!)
-        {
-            Embeddings = true
-        };
+        LLamaSharpConfig llamaSharpConfig = CreateLLamaSharpConfig(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration:ModelPath")!);
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration", llamaSharpConfig);
 
-        config.BindSection("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration", @params);
-
-        var weights = LLamaWeights.LoadFromFile(@params);
-
-        LLamaEmbedder embedder = new LLamaEmbedder(weights, @params);
-        return builder.WithLLamaSharpTextEmbeddingGeneration(new LLamaSharpTextEmbeddingGenerator(embedder));
+        return builder.WithLLamaSharpTextEmbeddingGeneration(llamaSharpConfig);
     }
 
     /// <summary>
@@ -202,28 +251,14 @@ public static class KernelMemoryBuilderExtensions
     /// <returns></returns>
     public static IKernelMemoryBuilder UseLLamaSharpTextGeneration(this IKernelMemoryBuilder builder, IConfiguration config)
     {
-        var gbnf = Utils.ReadResourceAsText("json.gbnf", "Assets").Trim();
-        var grammar = Grammar.Parse(gbnf, "root");
+        ModelParams modelParams = CreateModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!, false);
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", modelParams);
 
-        var inferenceParams = new InferenceParams
-        {
-            AntiPrompts = ["Output:", "User:", "\n\n"],
-            Temperature = 0.0f,
-            Grammar = grammar.CreateInstance()
-        };
+        var weights = LLamaWeights.LoadFromFile(modelParams);
+        var context = weights.CreateContext(modelParams);
+        StatelessExecutor executor = new StatelessExecutor(weights, modelParams);
 
-        ModelParams @params = new ModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!)
-        {
-            Embeddings = false
-        };
-
-        config.BindSection("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration", @params);
-
-        var weights = LLamaWeights.LoadFromFile(@params);
-        var context = weights.CreateContext(@params);
-        StatelessExecutor executor = new StatelessExecutor(weights, @params);
-
-        return builder.WithLLamaSharpTextGeneration(new LlamaSharpTextGenerator(weights, context, executor, inferenceParams));
+        return builder.WithLLamaSharpTextGeneration(new LlamaSharpTextGenerator(weights, context, executor, s_InferenceParams));
     }
 
     /// <summary>
@@ -232,33 +267,31 @@ public static class KernelMemoryBuilderExtensions
     /// <param name="builder"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IKernelMemoryBuilder UseLLamaSharp(this IKernelMemoryBuilder builder, IConfiguration config)
+    public static IKernelMemoryBuilder UseLLamaSharpTextGenerationAsConfig(this IKernelMemoryBuilder builder, IConfiguration config)
     {
-        var gbnf = Utils.ReadResourceAsText("json.gbnf", "Assets").Trim();
-        var grammar = Grammar.Parse(gbnf, "root");
+        LLamaSharpConfig llamaSharpConfig = CreateLLamaSharpConfig(
+            config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!,
+            s_InferenceParams);
 
-        var inferenceParams = new InferenceParams
-        {
-            AntiPrompts = ["Document:", "DOCUMENT:", "Output:", "OUTPUT:", "User:", "USER:", "\n\n"],
-            Temperature = 0.0f,
-            Grammar = grammar.CreateInstance()
-        };
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", llamaSharpConfig);
 
-        ModelParams @params = new ModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!)
-        {
-            Embeddings = true
-        };
+        return builder.WithLLamaSharpTextGeneration(llamaSharpConfig);
+    }
 
-        config.BindSection("KernelMemory:Services:LLamaSharp:TextEmbeddingGeneration", @params);
+    /// <summary>
+    /// Использовать локальную LLM для генерации текста.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IKernelMemoryBuilder UseLLamaSharpDefaults(this IKernelMemoryBuilder builder, IConfiguration config)
+    {
+        LLamaSharpConfig llamaSharpConfig = CreateLLamaSharpConfig(
+            config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!,
+            s_InferenceParams);
 
-        var weights = LLamaWeights.LoadFromFile(@params);
-        var context = weights.CreateContext(@params);
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", llamaSharpConfig);
 
-        StatelessExecutor executor = new StatelessExecutor(weights, @params);
-        LLamaEmbedder embedder = new LLamaEmbedder(weights, @params);
-
-        return builder
-            .WithLLamaSharpTextEmbeddingGeneration(new LLamaSharpTextEmbeddingGenerator(embedder))
-            .WithLLamaSharpTextGeneration(new LlamaSharpTextGenerator(weights, context, executor, inferenceParams));
+        return builder.WithLLamaSharpDefaults(llamaSharpConfig);
     }
 }

@@ -16,107 +16,34 @@ builder.Host.UseSerilog((context, services, config) =>
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
-var kmBuilder = new KernelMemoryBuilder(builder.Services);
-
-switch (builder.Configuration.GetValue<string>("LLM"))
+builder.AddKernelMemory(kernelMemoryBuilder =>
 {
-    case "openai":
-        kmBuilder.UseOpenAI(builder.Configuration);
-        break;
-    case "lmstudio":
-        kmBuilder
-            .UseOpenAITextEmbeddingGeneration(builder.Configuration)
-            .UseLMStudioTextGeneration(builder.Configuration);
-        break;
-    case "km-llamasharp":
-        kmBuilder
-            .UseOpenAITextEmbeddingGeneration(builder.Configuration)
-            .UseLlamaTextGeneration(builder.Configuration);
-        break;
-    case "llamasharp":
-        kmBuilder.UseLLamaSharp(builder.Configuration);
-        break;
-    default:
-        throw new NotImplementedException();
-}
+    switch (builder.Configuration.GetValue<string>("LLM"))
+    {
+        case "openai":
+            kernelMemoryBuilder.UseOpenAI(builder.Configuration);
+            break;
+        case "lmstudio":
+            kernelMemoryBuilder
+                .UseOpenAITextEmbeddingGeneration(builder.Configuration)
+                .UseLMStudioTextGeneration(builder.Configuration);
+            break;
+        case "llamasharp":
+            kernelMemoryBuilder
+                .UseLLamaSharpTextEmbeddingGenerationAsConfig(builder.Configuration)
+                .UseLLamaSharpTextGenerationAsConfig(builder.Configuration);
+            break;
+        default:
+            throw new NotImplementedException();
+    }
 
-var kernelMemory = kmBuilder
-    .UseCustomTextPartitioningOptions(builder.Configuration)
-    .WithCustomPromptProvider<PromptProvider>()
-    .UseCustomSearchClient<SearchClient>(builder.Configuration)
-    .UseSimpleStorage(builder.Configuration)
-    .Build();
-
-builder.Services.AddSingleton<IKernelMemory>(kernelMemory);
-
-//builder.Services.AddSingleton<IKernelMemory>(provider =>
-//{
-//    var kmBuilder = new KernelMemoryBuilder(builder.Services);
-
-//    var config = builder.Configuration;
-
-//    switch (config.GetValue<string>("LLM"))
-//    {
-//        case "openai":
-//            kmBuilder.UseOpenAI(config);
-//            break;
-//        case "lmstudio":
-//            kmBuilder
-//                .UseOpenAITextEmbeddingGeneration(config)
-//                .UseLMStudioTextGeneration(config);
-//            break;
-//        case "km-llamasharp":
-//            kmBuilder
-//                .UseOpenAITextEmbeddingGeneration(config)
-//                .UseLlamaTextGeneration(config);
-//            break;
-//        case "llamasharp":
-//            kmBuilder.UseLLamaSharp(config);
-//            break;
-//        default:
-//            throw new NotImplementedException();
-//    }
-
-//    return kmBuilder
-//        .UseCustomTextPartitioningOptions(config)
-//        .WithCustomPromptProvider<PromptProvider>()
-//        .UseCustomSearchClient<SearchClient>(config)
-//        .UseSimpleStorage(config)
-//        .Build<MemoryService>();
-//});
-
-//builder.AddKernelMemory(kmBuilder =>
-//{
-//    var config = builder.Configuration;
-
-//    switch (config.GetValue<string>("LLM"))
-//    {
-//        case "openai":
-//            kmBuilder.UseOpenAI(config);
-//            break;
-//        case "lmstudio":
-//            kmBuilder
-//                .UseOpenAITextEmbeddingGeneration(config)
-//                .UseLMStudioTextGeneration(config);
-//            break;
-//        case "km-llamasharp":
-//            kmBuilder
-//                .UseOpenAITextEmbeddingGeneration(config)
-//                .UseLlamaTextGeneration(config);
-//            break;
-//        case "llamasharp":
-//            kmBuilder.UseLLamaSharp(config);
-//            break;
-//        default:
-//            throw new NotImplementedException();
-//    }
-
-//    kmBuilder
-//        .UseCustomTextPartitioningOptions(config)
-//        .WithCustomPromptProvider<PromptProvider>()
-//        .UseCustomSearchClient<SearchClient>(config)
-//        .UseSimpleStorage(config);
-//});
+    kernelMemoryBuilder
+        .UseSimpleStorage(builder.Configuration)
+        .UseCustomTextPartitioningOptions(builder.Configuration)
+        .UseSearchClientConfig(builder.Configuration)
+        .WithCustomSearchClient<NlpSearchClient>()
+        .WithCustomPromptProvider<PromptProvider>();
+});
 
 var app = builder.Build();
 
@@ -124,10 +51,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.RoutePrefix = "swagger";
-    });
+    app.UseSwaggerUI();
 }
 else
 {
