@@ -1,10 +1,10 @@
 ﻿using LLama;
 using LLama.Common;
-using LLama.Grammars;
 using LLama.Native;
 using LLamaSharp.KernelMemory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.KernelMemory;
+using Microsoft.KernelMemory.AI;
 using Microsoft.KernelMemory.Configuration;
 using Microsoft.KernelMemory.DocumentStorage.DevTools;
 using Microsoft.KernelMemory.FileSystem.DevTools;
@@ -14,8 +14,6 @@ namespace SharpNlp.Core;
 
 public static class KernelMemoryBuilderExtensions
 {
-    //private static readonly SafeLLamaGrammarHandle s_Grammar = Grammar.Parse(Utils.ReadResourceAsText("json.gbnf", "Assets").Trim(), "root").CreateInstance();
-
     private static readonly IReadOnlyList<string> s_AntiPrompts = ["Document:", "DOCUMENT:", "Output:", "OUTPUT:", "User:", "USER:", "\n\n"];
 
     private static readonly InferenceParams s_InferenceParams = new()
@@ -32,7 +30,7 @@ public static class KernelMemoryBuilderExtensions
             GpuLayerCount = 5,
             MainGpu = 0,
             Seed = 1337,
-            SplitMode = LLama.Native.GPUSplitMode.None,
+            SplitMode = GPUSplitMode.None,
             DefaultInferenceParams = inferenceParams
         };
     }
@@ -46,7 +44,7 @@ public static class KernelMemoryBuilderExtensions
             GpuLayerCount = 5,
             MainGpu = 0,
             Seed = 1337,
-            SplitMode = LLama.Native.GPUSplitMode.None
+            SplitMode = GPUSplitMode.None
         };
     }
 
@@ -258,7 +256,7 @@ public static class KernelMemoryBuilderExtensions
         var context = weights.CreateContext(modelParams);
         StatelessExecutor executor = new StatelessExecutor(weights, modelParams);
 
-        return builder.WithLLamaSharpTextGeneration(new LlamaSharpTextGenerator(weights, context, executor, s_InferenceParams));
+        return builder.AddSingleton<ITextGenerator>(new LlamaSharpTextGenerator(weights, context, executor, s_InferenceParams));
     }
 
     /// <summary>
@@ -275,11 +273,12 @@ public static class KernelMemoryBuilderExtensions
 
         config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", llamaSharpConfig);
 
-        return builder.WithLLamaSharpTextGeneration(llamaSharpConfig);
+        return builder.AddSingleton<ITextGenerator>(new CustomLlamaSharpTextGenerator(llamaSharpConfig));
     }
 
     /// <summary>
     /// Использовать локальную LLM для генерации текста.
+    /// ОСТОРОЖНО. Не использует реализацию <see cref="CustomLlamaSharpTextGenerator"/>.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>

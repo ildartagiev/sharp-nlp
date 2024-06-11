@@ -89,9 +89,8 @@
 
   <ItemGroup>
     <PackageReference Include="LLamaSharp" />
-    <!--<PackageReference Include="LLamaSharp.Backend.Cpu" />-->
-    <PackageReference Include="LLamaSharp.Backend.OpenCL" />
-    <!--<PackageReference Include="LLamaSharp.Backend.Cuda11" />-->
+    <!--<PackageReference Include="LLamaSharp.Backend.OpenCL" />-->
+    <PackageReference Include="LLamaSharp.Backend.Cuda12" />
     <PackageReference Include="LLamaSharp.kernel-memory" />
     <PackageReference Include="Microsoft.KernelMemory.Core" />
     <PackageReference Include="Newtonsoft.Json" />
