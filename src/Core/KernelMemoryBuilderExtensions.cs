@@ -286,7 +286,9 @@ public static class KernelMemoryBuilderExtensions
     public static IKernelMemoryBuilder UseLLamaSharpDefaults(this IKernelMemoryBuilder builder, IConfiguration config)
     {
         LLamaSharpConfig llamaSharpConfig = CreateLLamaSharpConfig(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!);
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", llamaSharpConfig);
         ModelParams modelParams = CreateModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!, true);
+        config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", modelParams);
 
         var weights = LLamaWeights.LoadFromFile(modelParams);
         var context = weights.CreateContext(modelParams);
