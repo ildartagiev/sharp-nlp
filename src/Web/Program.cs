@@ -29,9 +29,7 @@ builder.AddKernelMemory(kernelMemoryBuilder =>
                 .UseLMStudioTextGeneration(builder.Configuration);
             break;
         case "llamasharp":
-            kernelMemoryBuilder
-                .UseLLamaSharpTextEmbeddingGenerationAsConfig(builder.Configuration)
-                .UseLLamaSharpTextGenerationAsConfig(builder.Configuration);
+            kernelMemoryBuilder.UseLLamaSharpDefaults(builder.Configuration);
             break;
         default:
             throw new NotImplementedException();

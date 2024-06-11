@@ -256,7 +256,7 @@ public static class KernelMemoryBuilderExtensions
         var context = weights.CreateContext(modelParams);
         StatelessExecutor executor = new StatelessExecutor(weights, modelParams);
 
-        return builder.AddSingleton<ITextGenerator>(new LlamaSharpTextGenerator(weights, context, executor, s_InferenceParams));
+        return builder.AddSingleton<ITextGenerator>(new CustomLlamaSharpTextGenerator(weights, context, executor, s_InferenceParams));
     }
 
     /// <summary>
@@ -285,12 +285,15 @@ public static class KernelMemoryBuilderExtensions
     /// <returns></returns>
     public static IKernelMemoryBuilder UseLLamaSharpDefaults(this IKernelMemoryBuilder builder, IConfiguration config)
     {
-        LLamaSharpConfig llamaSharpConfig = CreateLLamaSharpConfig(
-            config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!,
-            s_InferenceParams);
+        LLamaSharpConfig llamaSharpConfig = CreateLLamaSharpConfig(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!);
+        ModelParams modelParams = CreateModelParams(config.GetValue<string>("KernelMemory:Services:LLamaSharp:TextGeneration:ModelPath")!, true);
 
-        config.BindSection("KernelMemory:Services:LLamaSharp:TextGeneration", llamaSharpConfig);
+        var weights = LLamaWeights.LoadFromFile(modelParams);
+        var context = weights.CreateContext(modelParams);
+        var executor = new StatelessExecutor(weights, modelParams);
 
-        return builder.WithLLamaSharpDefaults(llamaSharpConfig);
+        return builder
+            .WithLLamaSharpTextEmbeddingGeneration(new LLamaSharpTextEmbeddingGenerator(llamaSharpConfig, weights))
+            .AddSingleton<ITextGenerator>(new CustomLlamaSharpTextGenerator(weights, context, executor, s_InferenceParams));
     }
 }
