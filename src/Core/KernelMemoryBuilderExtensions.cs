@@ -134,7 +134,6 @@ public static class KernelMemoryBuilderExtensions
         return builder.WithCustomTextPartitioningOptions(textPartitioningOptions);
     }
 
-
     /// <summary>
     /// Использовать кастомный ISearchClient с конфигурацией приложения.
     /// </summary>
