@@ -1,0 +1,6 @@
+# https://github.com/ggerganov/llama.cpp/blob/8183159cf3def112f6d1fe94815fce70e1bffa12/grammars/list.gbnf
+
+root ::= item+
+
+# Excludes various line break characters
+item ::= [^\r\n\x0b\x0c\x85\u2028\u2029]+ "\n"

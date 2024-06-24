@@ -39,7 +39,7 @@ builder.AddKernelMemory(kernelMemoryBuilder =>
         .UseSimpleStorage(builder.Configuration)
         .UseCustomTextPartitioningOptions(builder.Configuration)
         .UseSearchClientConfig(builder.Configuration)
-        .WithCustomSearchClient<NlpSearchClient>()
+        .WithCustomSearchClient<SearchClientNlp>()
         .WithCustomPromptProvider<PromptProvider>();
 });
 

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DocumentFormat.OpenXml.Office2010.Word;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.KernelMemory;
+using Newtonsoft.Json;
 
 namespace SharpNlp.Web.Controllers;
 
@@ -150,11 +150,60 @@ public class KernelMemoryController : ApiControllerBase
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
-        return Ok(new
+        if (answer.NoResult)
         {
-            answer.NoResult,
-            answer.NoResultReason,
-            answer.Result
-        });
+            return NotFound();
+        }
+
+        var result = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(answer.Result);
+        return Ok(result);
+    }
+
+    [HttpGet("nlp-all-docs")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
+    public async Task<IActionResult> NlpAllDocs(
+        [FromQuery] string? question,
+        [FromQuery] string? index,
+        CancellationToken cancellationToken)
+    {
+        List<Dictionary<string, List<string>>> result = new();
+
+        MemoryAnswer answer = await _kernelMemory.AskAsync(
+            question: question ?? "",
+            index: index,
+            filter: MemoryFilters.ByDocument("doc001"),
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        result.Add(JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(answer.Result)!);
+
+        answer = await _kernelMemory.AskAsync(
+            question: question ?? "",
+            index: index,
+            filter: MemoryFilters.ByDocument("doc002"),
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        result.Add(JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(answer.Result)!);
+
+        answer = await _kernelMemory.AskAsync(
+            question: question ?? "",
+            index: index,
+            filter: MemoryFilters.ByDocument("doc003"),
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        result.Add(JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(answer.Result)!);
+
+        answer = await _kernelMemory.AskAsync(
+            question: question ?? "",
+            index: index,
+            filter: MemoryFilters.ByDocument("doc004"),
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        result.Add(JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(answer.Result)!);
+
+        return Ok(result);
     }
 }

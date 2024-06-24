@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Google.Protobuf.Collections;
 using Microsoft.KernelMemory;
 
 namespace SharpNlp.Core;
@@ -53,8 +54,8 @@ public static class Utils
         var result = new DocumentInfo
         {
             PERSON = entities[DocumentInfo.LABEL_PERSON].ToList(),
-            ORGANISATION = _ProcessEntities(entities[DocumentInfo.LABEL_ORGANISATION].ToList()),
-            DATE = entities[DocumentInfo.LABEL_DATE].ToList(),
+            ORGANISATION = ProcessOrganisations(entities[DocumentInfo.LABEL_ORGANISATION].ToList()),
+            DATE = ProcessDates(entities[DocumentInfo.LABEL_DATE].ToList()),
             MINERALDEPOSIT = entities[DocumentInfo.LABEL_MINERALDEPOSIT].ToList(),
             RESERVOIR = entities[DocumentInfo.LABEL_RESERVOIR].ToList(),
             NPT = entities[DocumentInfo.LABEL_NPT].ToList()
@@ -73,7 +74,7 @@ public static class Utils
         }
     }
 
-    private static List<string> _ProcessEntities(List<string> entities)
+    private static List<string> ProcessOrganisations(List<string> entities)
     {
         for (int i = 0; i < entities.Count; i++)
         {
@@ -83,24 +84,39 @@ public static class Utils
         return entities;
     }
 
-    private static List<string> ProcessEntities(List<string> entities)
+    private static List<string> ProcessDates(List<string> entities)
     {
+        List<string> result = new();
+
         for (int i = 0; i < entities.Count; i++)
         {
-            var match = _regex.Match(entities[i]);
-
-            while (match.Success)
+            if (DateOnly.TryParseExact(entities[i], "dd.MM.yyyy", out var date))
             {
-                var newEntity = new StringBuilder(entities[i]);
-
-                newEntity.Replace('<', '"', match.Index, 1);
-                newEntity.Replace('>', '"', match.Index + match.Length - 1, 1);
-
-                entities[i] = newEntity.ToString();
-                match = match.NextMatch();
+                result.Add(entities[i]);
             }
         }
 
-        return entities;
+        return result;
     }
+
+    //private static List<string> ProcessEntities(List<string> entities)
+    //{
+    //    for (int i = 0; i < entities.Count; i++)
+    //    {
+    //        var match = _regex.Match(entities[i]);
+
+    //        while (match.Success)
+    //        {
+    //            var newEntity = new StringBuilder(entities[i]);
+
+    //            newEntity.Replace('<', '"', match.Index, 1);
+    //            newEntity.Replace('>', '"', match.Index + match.Length - 1, 1);
+
+    //            entities[i] = newEntity.ToString();
+    //            match = match.NextMatch();
+    //        }
+    //    }
+
+    //    return entities;
+    //}
 }

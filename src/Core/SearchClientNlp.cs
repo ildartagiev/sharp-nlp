@@ -1,24 +1,23 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
+using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory;
 using Microsoft.KernelMemory.AI;
 using Microsoft.KernelMemory.MemoryStorage;
 using Microsoft.KernelMemory.Prompts;
 using Newtonsoft.Json;
-using SharpNlp.Core;
-using System.Diagnostics;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace SharpNlp.Core;
 
-public class NlpSearchClient : SearchClient
+public class SearchClientNlp : SearchClient
 {
     private new readonly string _answerPrompt;
 
     private static readonly Regex s_MultiLineBreakRegex = new("\n{2,}", RegexOptions.Multiline);
     private static readonly string s_DoubleEnvBreak = Environment.NewLine + Environment.NewLine;
 
-    public NlpSearchClient(
+    public SearchClientNlp(
         IMemoryDb memoryDb,
         ITextGenerator textGenerator,
         IPromptProvider promptProvider,
@@ -26,13 +25,7 @@ public class NlpSearchClient : SearchClient
         ILogger<SearchClient>? log = null)
         : base(memoryDb, textGenerator, promptProvider, config, log)
     {
-        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
-        {
-            builder.AddConsole();
-            builder.SetMinimumLevel(LogLevel.Trace);
-        });
-
-        _answerPrompt = promptProvider.ReadPrompt(Constants.PromptNamesNerV6Ru);
+        _answerPrompt = promptProvider.ReadPrompt($"{Constants.Prompts.NerV7}-en");
     }
 
     private MemoryAnswer GetNoAnswer(string question) =>
@@ -258,7 +251,6 @@ public class NlpSearchClient : SearchClient
         }
 
         var text = new StringBuilder();
-        //var charsGenerated = 0;
         var watch = new Stopwatch();
         watch.Restart();
         await foreach (var x in this._textGenerator.GenerateTextAsync(prompt, options)
@@ -266,12 +258,6 @@ public class NlpSearchClient : SearchClient
         {
             text.Append(x);
             Console.Write(x);
-
-            //if (this._log.IsEnabled(LogLevel.Trace) && text.Length - charsGenerated >= 30)
-            //{
-            //    charsGenerated = text.Length;
-            //    this._log.LogTrace("{0} chars generated", charsGenerated);
-            //}
         }
 
         Console.WriteLine();

@@ -14,11 +14,12 @@ namespace SharpNlp.Core;
 
 public static class KernelMemoryBuilderExtensions
 {
-    private static readonly IReadOnlyList<string> s_AntiPrompts = ["Document:", "DOCUMENT:", "Output:", "OUTPUT:", "User:", "USER:", "\n\n"];
+    private static readonly IReadOnlyList<string> s_AntiPrompts = [
+        "Document:", "DOCUMENT:", "Документ:", "ДОКУМЕНТ:", "Output:", "OUTPUT:", "Вывод:", "ВЫВОД:", "User:", "USER:", "\n\n", "ОТВЕТ:", "Ответ:"];
 
     private static readonly InferenceParams s_InferenceParams = new()
     {
-        AntiPrompts = s_AntiPrompts,
+        AntiPrompts = ["\n\n"],
         Temperature = 0.0f
     };
 
