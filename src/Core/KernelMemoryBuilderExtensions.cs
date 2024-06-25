@@ -278,7 +278,6 @@ public static class KernelMemoryBuilderExtensions
 
     /// <summary>
     /// Использовать локальную LLM для генерации текста.
-    /// ОСТОРОЖНО. Не использует реализацию <see cref="CustomLlamaSharpTextGenerator"/>.
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="config"></param>
