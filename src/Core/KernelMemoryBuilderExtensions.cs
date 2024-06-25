@@ -144,7 +144,7 @@ public static class KernelMemoryBuilderExtensions
     public static IKernelMemoryBuilder UseSearchClientConfig(this IKernelMemoryBuilder builder, IConfiguration config)
     {
         var searchClientConfig = new SearchClientConfig();
-        config.BindSection("KernelMemory:NERSearchClient", searchClientConfig);
+        config.BindSection("KernelMemory:SearchClient", searchClientConfig);
 
         return builder.WithSearchClientConfig(searchClientConfig);
     }
