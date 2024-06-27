@@ -100,7 +100,7 @@ public class KernelMemoryController : ApiControllerBase
 
     [HttpDelete("documents")]
     [ProducesResponseType<DeleteAccepted>(StatusCodes.Status202Accepted, "application/json")]
-    public async Task<IActionResult> DeleteDocuments(
+    public async Task<IActionResult> DeleteDocument(
         [FromQuery] string? index,
         [FromQuery] string documentId,
         CancellationToken cancellationToken)
@@ -118,6 +118,13 @@ public class KernelMemoryController : ApiControllerBase
             });
     }
 
+    /// <summary>
+    /// Метод не очень работает, не понятно как передать фильтры.
+    /// Лучше переписать с более удобными аргументами как в <see cref="Nlp(string?, string?, string, CancellationToken)"/>.
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet("ask")]
     [ProducesResponseType<MemoryAnswer>(StatusCodes.Status200OK, "application/json")]
     public async Task<IActionResult> Ask(
@@ -159,6 +166,9 @@ public class KernelMemoryController : ApiControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Этот метод только для тестовых целей.
+    /// </summary>
     [HttpGet("nlp-all-docs")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
     public async Task<IActionResult> NlpAllDocs(
